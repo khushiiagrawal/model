@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: waste-classification-app
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      # Download model if not present
+      if [ ! -f "$MODEL_PATH" ]; then
+        echo "Downloading model..."
+        python -c "import gdown; gdown.download('$MODEL_URL', '$MODEL_PATH', quiet=False)"
+      fi
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: UPLOAD_FOLDER
+        value: static/uploads
+      - key: MODEL_URL
+        value: https://drive.google.com/uc?id=1vFqMSple_RQm_nG-pPP_1obnMeIsYqgI
+      - key: MODEL_PATH
+        value: waste_classification_model.h5 
